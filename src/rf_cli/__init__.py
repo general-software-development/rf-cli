@@ -3,7 +3,7 @@ from asyncio import iscoroutine
 from .io import _internal_init_print_thread
 from typing import Literal, Callable
 from .internal import panic, PanicCode
-from .io import print
+from .io import print, read
 
 async def start() -> None:
     _internal_init_print_thread()
