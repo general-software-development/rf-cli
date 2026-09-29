@@ -8,6 +8,8 @@ async def main():
     async for n in rf_cli.read():
         numbers.append(int(n))
 
-    rf_cli.print(f"Output: {sum(numbers)}")
+    await rf_cli.print(f"Output: {sum(numbers)}")
+
+    rf_cli.print(1 + '3')
 
 rf_cli.mainfn(__name__, main)

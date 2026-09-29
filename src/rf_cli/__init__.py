@@ -1,12 +1,14 @@
 import asyncio
-from asyncio import iscoroutine
+from asyncio import iscoroutine, sleep
 from .io import _internal_init_print_thread
 from typing import Literal, Callable
-from .internal import panic, PanicCode
+from .internal import panic, PanicCode, global_console
 from .io import print, read
+from rich.spinner import Spinner
 
 async def start() -> None:
-    _internal_init_print_thread()
+    with global_console.status("Starting rf-cli:print-thread thread", spinner="line") as status:
+        await _internal_init_print_thread()
 
 async def _async_mainfn(name: Literal['__main__'] | str = "__main__", main: Callable | None = None):
     if name != '__main__':
@@ -15,9 +17,12 @@ async def _async_mainfn(name: Literal['__main__'] | str = "__main__", main: Call
     await start()
 
     if main is not None:
-        p = main()
-        if iscoroutine(p):
-            await p
+        try:
+            p = main()
+            if iscoroutine(p):
+                await p
+        except BaseException as e:
+            panic(PanicCode.ProgramError, str(e), e)
 
         loop = asyncio.get_running_loop()
 
@@ -35,4 +40,4 @@ async def _async_mainfn(name: Literal['__main__'] | str = "__main__", main: Call
 def mainfn(name: Literal['__main__'] | str, main: Callable | None = None):
     asyncio.run(_async_mainfn(name, main))
 
-__all__ = ('start', 'mainfn', 'print')
+__all__ = ('start', 'mainfn', 'print', 'read')

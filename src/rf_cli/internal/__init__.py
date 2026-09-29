@@ -10,12 +10,13 @@ class PanicCode(Enum):
     PCORE_ERROR = (1, "-PCORE_ERROR")
     PrintAlreadyInit = (2, "-PPRINT_ALREADY_INIT")
     InvalidExecContext = (3, "-PINVALID_EXEC_CONTEXT")
+    ProgramError = (4, "-PPROGRAM_ERROR")
 
     def __init__(self, code: int, label: str):
         self.code = code
         self.label = label
 
 def panic(code: PanicCode, msg: str, *objects: Any) -> Never:
-    panic_id = f"(-0x{hex(code.code)}) PANIC {code.label}"
-    global_stderr.print(f"[bold red]{panic_id}:  {msg}[/]")
+    panic_id = f"(-{hex(code.code)}) PANIC {code.label}"
+    global_stderr.print(f"[bold red]{panic_id}: [/]", *objects)
     sys.exit(1 + code.code)

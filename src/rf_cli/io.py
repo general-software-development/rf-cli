@@ -40,7 +40,7 @@ def __internal_print_thread() -> None:
 
 _initialised: bool = False
 
-def _internal_init_print_thread():
+async def _internal_init_print_thread():
     global _initialised
 
     if _initialised:
@@ -48,11 +48,12 @@ def _internal_init_print_thread():
 
     __print_thread = threading.Thread(
         target=__internal_print_thread,
-        name="print-thread",
+        name="rf-cli:print-thread",
         daemon=True,
     )
 
     __print_thread.start()
+    await aio.sleep(0.1)
 
     _initialised = True
 
